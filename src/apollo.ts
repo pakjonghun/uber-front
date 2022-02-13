@@ -1,4 +1,6 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+
+export const getIsLoggedIn = makeVar(false);
 
 const client = new ApolloClient({
   uri: "http://127.0.0:8000/graphql",
@@ -8,7 +10,7 @@ const client = new ApolloClient({
         fields: {
           isLoggedIn: {
             read() {
-              return true;
+              return getIsLoggedIn();
             },
           },
         },

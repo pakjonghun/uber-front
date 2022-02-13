@@ -1,12 +1,9 @@
-import { makeVar } from "@apollo/client";
 import React from "react";
+import { getIsLoggedIn } from "../apollo";
 
-export const loggedInVar = makeVar(false);
 const LogInRouter = () => {
-  const a = loggedInVar();
-  console.log(a);
   const onClick = () => {
-    loggedInVar(false);
+    getIsLoggedIn(false);
   };
   return (
     <div>
