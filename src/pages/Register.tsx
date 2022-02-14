@@ -1,103 +1,75 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { Link, useLocation } from "react-router-dom";
-import { getIsLoggedIn } from "../apollo";
-import Button from "../components/Button";
-import ErrorMessage from "../components/Error";
+import React, { useCallback } from "react";
 import Helmet from "../components/Helmet";
-import { LoginMutationMutation } from "../generated/types";
+import { useForm } from "react-hook-form";
+import ErrorMessage from "../components/Error";
+import { gql, useMutation } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
+import { OutRegister, MutationRegisterArgs, Role } from "../generated/types";
+import Button from "../components/Button";
+import { GraphQLError, GraphQLErrorExtensions } from "graphql";
 import { onError } from "../utility/utility";
 
-interface FormProps {
+interface RegisterFormProps {
   email: string;
   password: string;
-  error?: string;
+  role: Role;
 }
 
-const LOGIN_MUTATION = gql`
-  mutation loginMutation($email: String!, $password: String!) {
-    login(password: $password, email: $email) {
-      isSuccess
-      token
-      error
-    }
-  }
-`;
-
-const CHECK_EMAIL = gql`
-  query checkEmail($email: String!) {
-    checkEmail(email: $email) {
+const REGISTER_ACCOUNT = gql`
+  mutation createAccount($email: String!, $password: String!, $role: Role) {
+    register(role: $role, email: $email, password: $password) {
       isSuccess
     }
   }
 `;
 
-const Login = () => {
-  const location = useLocation().state;
-  const { email, password } = location
-    ? (location as FormProps)
-    : { email: "", password: "" };
+const Register = () => {
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
+    getValues,
     watch,
     formState: { errors, isValid },
-  } = useForm<FormProps>({
+  } = useForm<RegisterFormProps>({
     mode: "onChange",
-    defaultValues: {
-      email,
-      password,
+    defaultValues: { role: Role.Client },
+  });
+
+  const [registerUser, { loading, data }] = useMutation<
+    { register: OutRegister },
+    MutationRegisterArgs
+  >(REGISTER_ACCOUNT, {
+    onError: (err) => onError(err),
+    onCompleted: (data) => {
+      if (data.register.isSuccess) {
+        navigate("/", {
+          state: { email: watch("email"), password: watch("password") },
+        });
+      } else {
+        alert(data.register.error);
+      }
     },
   });
 
-  const onCompleted = (data: LoginMutationMutation) => {
-    const {
-      login: { isSuccess, token, error },
-    } = data;
-    if (isSuccess) {
-      console.log(token);
-      getIsLoggedIn(true);
-    } else {
-      console.log(error);
-      alert(error);
-    }
-  };
-
-  const [loginFunc, { loading }] = useMutation<LoginMutationMutation>(
-    LOGIN_MUTATION,
-    {
-      variables: {
-        email: watch("email"),
-        password: watch("password"),
-      },
-      onError: (err) => onError(err),
-      onCompleted,
-    }
-  );
-
   const onSubmit = useCallback(() => {
     if (!loading) {
-      loginFunc();
+      registerUser({ variables: getValues() });
     }
-  }, [loginFunc, loading]);
+  }, [loading, registerUser, getValues]);
 
-  const buttonProps = {
-    name: "login",
-    isValid,
-    isLoading: loading,
-  };
+  const buttonProps = { name: "Create Account", isValid, isLoading: loading };
 
   return (
     <div className="h-screen">
-      <Helmet title="Login" />
+      <Helmet title="Join" />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col items-start justify-center max-w-screen-md py-10 px-5 mt-20 mx-auto bg-slate-50 rounded-md"
       >
         <h1 className="mx-auto font-medium text-2xl mb-5"> Uber Eats</h1>
-        <h3 className="mb-3 font-semibold">Welcome back</h3>
+        <h3 className="mb-3 font-semibold">Let's get start</h3>
         <small className="mb-2">
           Sign in your email adress or mobile number.
         </small>
@@ -132,11 +104,19 @@ const Login = () => {
         {errors.password?.message && (
           <ErrorMessage message={errors.password.message} />
         )}
+
+        <select {...register("role")} className="w-full mt-3">
+          {Object.keys(Role).map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
+        </select>
         <Button {...buttonProps} />
         <span className="block mx-auto mt-5">
-          <span>New to Uber?</span>
-          <Link to="/register" className="ml-2 text-green-500">
-            Create an account
+          <span>Joined to Uber?</span>
+          <Link to="/" className="ml-2 text-green-500">
+            Login
           </Link>
         </span>
       </form>
@@ -144,4 +124,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

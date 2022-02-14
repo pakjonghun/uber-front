@@ -6,7 +6,6 @@ import LogoutRouter from "./routers/logout.router";
 
 function App() {
   const isLoggedIn = useReactiveVar(getIsLoggedIn);
-
   return isLoggedIn ? <LoginRouter /> : <LogoutRouter />;
 }
 

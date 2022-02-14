@@ -1,9 +1,20 @@
-import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import {
+  ApolloClient,
+  createHttpLink,
+  InMemoryCache,
+  makeVar,
+} from "@apollo/client";
 
 export const getIsLoggedIn = makeVar(false);
+export const getToken = makeVar("");
+
+const link = createHttpLink({
+  uri: "http://localhost:8000/graphql",
+  credentials: "include",
+});
 
 const client = new ApolloClient({
-  uri: "http://127.0.0:8000/graphql",
+  link,
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
@@ -11,6 +22,11 @@ const client = new ApolloClient({
           isLoggedIn: {
             read() {
               return getIsLoggedIn();
+            },
+          },
+          token: {
+            read() {
+              getToken();
             },
           },
         },

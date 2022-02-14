@@ -2,6 +2,10 @@
 
 ## 인강 따라하기
 
+## ect
+
+- enum 은 반복문으로 돌릴수도 있다.. 몰랐는데 ㅋㅋ
+
 ## useform
 
 - watch(name) name 만 watch 할수 있다. 없으면 전부다 watch 한다.
