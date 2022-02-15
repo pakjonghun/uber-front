@@ -9,7 +9,6 @@ interface ButtonProps {
 const classOutPut = (...styleName: string[]) => styleName.join(" ");
 
 const Button: FC<ButtonProps> = ({ name, isLoading, isValid }) => {
-  console.log(isValid, !isLoading);
   return (
     <button
       className={classOutPut(

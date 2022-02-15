@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import ErrorMessage from "../components/Error";
 import { gql, useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
-import { OutRegister, MutationRegisterArgs, Role } from "../generated/types";
+import { Role, CreateAccountMutation } from "../generated/types";
 import Button from "../components/Button";
-import { GraphQLError, GraphQLErrorExtensions } from "graphql";
+
 import { onError } from "../utility/utility";
 
 interface RegisterFormProps {
@@ -19,6 +19,7 @@ const REGISTER_ACCOUNT = gql`
   mutation createAccount($email: String!, $password: String!, $role: Role) {
     register(role: $role, email: $email, password: $password) {
       isSuccess
+      error
     }
   }
 `;
@@ -37,21 +38,21 @@ const Register = () => {
     defaultValues: { role: Role.Client },
   });
 
-  const [registerUser, { loading, data }] = useMutation<
-    { register: OutRegister },
-    MutationRegisterArgs
-  >(REGISTER_ACCOUNT, {
-    onError: (err) => onError(err),
-    onCompleted: (data) => {
-      if (data.register.isSuccess) {
-        navigate("/", {
-          state: { email: watch("email"), password: watch("password") },
-        });
-      } else {
-        alert(data.register.error);
-      }
-    },
-  });
+  const [registerUser, { loading, data }] = useMutation<CreateAccountMutation>(
+    REGISTER_ACCOUNT,
+    {
+      onError: (err) => onError(err),
+      onCompleted: (data) => {
+        if (data.register.isSuccess) {
+          navigate("/", {
+            state: { email: watch("email"), password: watch("password") },
+          });
+        } else {
+          alert(data.register.error);
+        }
+      },
+    }
+  );
 
   const onSubmit = useCallback(() => {
     if (!loading) {

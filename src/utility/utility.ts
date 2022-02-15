@@ -1,5 +1,10 @@
 type gqlError = {
-  response: {
+  exception?: {
+    response: {
+      error: string;
+    };
+  };
+  response?: {
     error: string;
     message: string[];
     statusCode: number;
@@ -9,7 +14,8 @@ type gqlError = {
 export const onError = (err: any) => {
   if (err?.graphQLErrors[0]?.extensions) {
     const e = err?.graphQLErrors[0]?.extensions! as gqlError;
-    alert(e.response.message[0]);
+    console.log("error", e.response);
+    alert(e?.response?.message || e?.exception?.response?.error || "error");
   } else {
     alert(err);
   }

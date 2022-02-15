@@ -4,6 +4,15 @@
 
 ## ect
 
+- cookie : cors 는 배포시 be 에서 별도로 설정 필요
+
+  ```
+  const link = createHttpLink({
+    uri: "http://localhost:8000/graphql",
+    credentials: "include",
+  });
+  ```
+
 - enum 은 반복문으로 돌릴수도 있다.. 몰랐는데 ㅋㅋ
 
 ## useform

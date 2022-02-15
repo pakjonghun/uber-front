@@ -2,10 +2,11 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation } from "react-router-dom";
-import { getIsLoggedIn } from "../apollo";
+import { getIsLoggedIn, getToken } from "../apollo";
 import Button from "../components/Button";
 import ErrorMessage from "../components/Error";
 import Helmet from "../components/Helmet";
+import { TOKEN } from "../constants";
 import { LoginMutationMutation } from "../generated/types";
 import { onError } from "../utility/utility";
 
@@ -56,8 +57,9 @@ const Login = () => {
     const {
       login: { isSuccess, token, error },
     } = data;
-    if (isSuccess) {
-      console.log(token);
+    if (isSuccess && token) {
+      localStorage.setItem(TOKEN, token);
+      getToken(token);
       getIsLoggedIn(true);
     } else {
       console.log(error);
