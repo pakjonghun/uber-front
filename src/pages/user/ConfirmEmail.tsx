@@ -3,9 +3,8 @@ import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { VerifyMutation } from "../../generated/types";
 import { onError } from "../../utility/utility";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import useMe from "../../hooks/useMe";
-import { idText } from "typescript";
+import Helemt from "../../components/Helmet";
 
 const VERIFYMUTATION = gql`
   mutation verify($code: String!) {
@@ -60,6 +59,7 @@ const ConfirmEmail = () => {
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-3">
+        <Helemt title="ConfirmEmail" />
         <h1 className="-mt-[20%] font-bold text-2xl">Now verifying email</h1>
         <h3 className="text-lg"> wait a minute plz</h3>
       </div>

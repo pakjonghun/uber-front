@@ -1,5 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
+import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { Link, useLocation } from "react-router-dom";
 import { getIsLoggedIn, getToken } from "../apollo";
@@ -22,14 +22,6 @@ const LOGIN_MUTATION = gql`
       isSuccess
       token
       error
-    }
-  }
-`;
-
-const CHECK_EMAIL = gql`
-  query checkEmail($email: String!) {
-    checkEmail(email: $email) {
-      isSuccess
     }
   }
 `;
@@ -62,7 +54,6 @@ const Login = () => {
       getToken(token);
       getIsLoggedIn(true);
     } else {
-      console.log(error);
       alert(error);
     }
   };

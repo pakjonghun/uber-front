@@ -1,5 +1,4 @@
 import React from "react";
-import { getIsLoggedIn } from "../apollo";
 import Loading from "../components/Loading";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Rest from "../pages/client/Rest";
@@ -8,12 +7,14 @@ import Header from "../components/Header";
 import useMe from "../hooks/useMe";
 import ConfirmEmail from "../pages/user/ConfirmEmail";
 import EditProfile from "../pages/user/EditProfile";
+import SearchRests from "../pages/client/SearchRest";
 
 const ClientRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Header />}>
         <Route path="" element={<Rest />} />
+        <Route path="search" element={<SearchRests />} />
         <Route path="confirm">
           <Route path="" element={<ConfirmEmail />} />
         </Route>

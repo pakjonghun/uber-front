@@ -1,5 +1,9 @@
 ## uber-eats clone
 
+> [notionLink]('https://stitch-saw-c14.notion.site/gql-fd3255779b2240599cd2a3c515f19339)
+
+---
+
 ## 인강 따라하기
 
 ## ect

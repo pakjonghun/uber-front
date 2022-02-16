@@ -20,31 +20,29 @@ const Header = () => {
   }, [logout]);
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-screen-xl">
       {!data?.me?.isEmailVerified && (
         <div className="flex justify-center py-3 bg-red-400">
           <span className="text-sm text-red-50">Please Verify Email</span>
         </div>
       )}
-      <div>
-        <header className="flex item-center justify-between w-full max-w-screen-xl mx-auto py-3 px-5 xl:px-0">
-          <h1>Uber Eats</h1>
-          <ul className="flex space-x-5 text-xl">
-            <li>
-              <Link to="/profile">
-                <FontAwesomeIcon icon={faUser} />
-              </Link>
-            </li>
-            <li>
-              <Link to="/" onClick={onClick}>
-                <FontAwesomeIcon icon={faRightFromBracket} />
-              </Link>
-            </li>
-          </ul>
-        </header>
-        <Outlet />
-      </div>
-    </>
+      <header className="flex item-center justify-between w-full mx-auto py-3 px-6 xl:px-2">
+        <h1>Uber Eats</h1>
+        <ul className="flex space-x-5 text-xl">
+          <li>
+            <Link to="/profile">
+              <FontAwesomeIcon icon={faUser} />
+            </Link>
+          </li>
+          <li>
+            <Link to="/" onClick={onClick}>
+              <FontAwesomeIcon icon={faRightFromBracket} />
+            </Link>
+          </li>
+        </ul>
+      </header>
+      <Outlet />
+    </div>
   );
 };
 

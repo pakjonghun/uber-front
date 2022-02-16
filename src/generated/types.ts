@@ -653,6 +653,8 @@ export type RestInputType = {
   promoteUntil?: InputMaybe<Scalars['DateTime']>;
 };
 
+export type RestSearchFieldFragment = { __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, name: string } | null };
+
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -671,13 +673,6 @@ export type LoginMutationMutationVariables = Exact<{
 
 export type LoginMutationMutation = { __typename?: 'Mutation', login: { __typename?: 'OutLogin', isSuccess: boolean, token?: string | null, error?: string | null } };
 
-export type CheckEmailQueryVariables = Exact<{
-  email: Scalars['String'];
-}>;
-
-
-export type CheckEmailQuery = { __typename?: 'Query', checkEmail: { __typename?: 'OutCheckEmail', isSuccess: boolean } };
-
 export type CreateAccountMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -686,6 +681,22 @@ export type CreateAccountMutationVariables = Exact<{
 
 
 export type CreateAccountMutation = { __typename?: 'Mutation', register: { __typename?: 'OutRegister', isSuccess: boolean, error?: string | null } };
+
+export type RestsQueryVariables = Exact<{
+  catePage?: InputMaybe<Scalars['Int']>;
+  restPage?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type RestsQuery = { __typename?: 'Query', findAllCate: { __typename?: 'FindAllCate', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number }> | null }, findRests: { __typename?: 'OutFindRestDto', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, name: string } | null }> | null } };
+
+export type SearchRestQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']>;
+  term: Scalars['String'];
+}>;
+
+
+export type SearchRestQuery = { __typename?: 'Query', searchRest: { __typename?: 'OutRestSestch', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, name: string } | null }> | null } };
 
 export type VerifyMutationVariables = Exact<{
   code: Scalars['String'];
@@ -704,6 +715,19 @@ export type EditProfileMutationVariables = Exact<{
 
 export type EditProfileMutation = { __typename?: 'Mutation', update: { __typename?: 'OutUpdate', isSuccess: boolean, UpdatedUser?: { __typename?: 'UpdatedUser', email: string, role: Role } | null } };
 
+export const RestSearchFieldFragmentDoc = gql`
+    fragment RestSearchField on Rest {
+  id
+  name
+  adress
+  img
+  isPromited
+  cate {
+    id
+    name
+  }
+}
+    `;
 export const ChangeVerifyedFragmentDoc = gql`
     fragment ChangeVerifyed on Users {
   isEmailVerified
@@ -814,41 +838,6 @@ export function useLoginMutationMutation(baseOptions?: Apollo.MutationHookOption
 export type LoginMutationMutationHookResult = ReturnType<typeof useLoginMutationMutation>;
 export type LoginMutationMutationResult = Apollo.MutationResult<LoginMutationMutation>;
 export type LoginMutationMutationOptions = Apollo.BaseMutationOptions<LoginMutationMutation, LoginMutationMutationVariables>;
-export const CheckEmailDocument = gql`
-    query checkEmail($email: String!) {
-  checkEmail(email: $email) {
-    isSuccess
-  }
-}
-    `;
-
-/**
- * __useCheckEmailQuery__
- *
- * To run a query within a React component, call `useCheckEmailQuery` and pass it any options that fit your needs.
- * When your component renders, `useCheckEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCheckEmailQuery({
- *   variables: {
- *      email: // value for 'email'
- *   },
- * });
- */
-export function useCheckEmailQuery(baseOptions: Apollo.QueryHookOptions<CheckEmailQuery, CheckEmailQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CheckEmailQuery, CheckEmailQueryVariables>(CheckEmailDocument, options);
-      }
-export function useCheckEmailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckEmailQuery, CheckEmailQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CheckEmailQuery, CheckEmailQueryVariables>(CheckEmailDocument, options);
-        }
-export type CheckEmailQueryHookResult = ReturnType<typeof useCheckEmailQuery>;
-export type CheckEmailLazyQueryHookResult = ReturnType<typeof useCheckEmailLazyQuery>;
-export type CheckEmailQueryResult = Apollo.QueryResult<CheckEmailQuery, CheckEmailQueryVariables>;
 export const CreateAccountDocument = gql`
     mutation createAccount($email: String!, $password: String!, $role: Role) {
   register(role: $role, email: $email, password: $password) {
@@ -885,6 +874,97 @@ export function useCreateAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateAccountMutationHookResult = ReturnType<typeof useCreateAccountMutation>;
 export type CreateAccountMutationResult = Apollo.MutationResult<CreateAccountMutation>;
 export type CreateAccountMutationOptions = Apollo.BaseMutationOptions<CreateAccountMutation, CreateAccountMutationVariables>;
+export const RestsDocument = gql`
+    query rests($catePage: Int, $restPage: Int) {
+  findAllCate(page: $catePage) {
+    data {
+      id
+      slug
+      name
+      img
+      restaurantCount
+    }
+    totalPages
+    totalResults
+  }
+  findRests(page: $restPage) {
+    data {
+      ...RestSearchField
+    }
+    totalPages
+    totalResults
+  }
+}
+    ${RestSearchFieldFragmentDoc}`;
+
+/**
+ * __useRestsQuery__
+ *
+ * To run a query within a React component, call `useRestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRestsQuery({
+ *   variables: {
+ *      catePage: // value for 'catePage'
+ *      restPage: // value for 'restPage'
+ *   },
+ * });
+ */
+export function useRestsQuery(baseOptions?: Apollo.QueryHookOptions<RestsQuery, RestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RestsQuery, RestsQueryVariables>(RestsDocument, options);
+      }
+export function useRestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RestsQuery, RestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RestsQuery, RestsQueryVariables>(RestsDocument, options);
+        }
+export type RestsQueryHookResult = ReturnType<typeof useRestsQuery>;
+export type RestsLazyQueryHookResult = ReturnType<typeof useRestsLazyQuery>;
+export type RestsQueryResult = Apollo.QueryResult<RestsQuery, RestsQueryVariables>;
+export const SearchRestDocument = gql`
+    query searchRest($page: Int, $term: String!) {
+  searchRest(page: $page, term: $term) {
+    totalPages
+    totalResults
+    data {
+      ...RestSearchField
+    }
+  }
+}
+    ${RestSearchFieldFragmentDoc}`;
+
+/**
+ * __useSearchRestQuery__
+ *
+ * To run a query within a React component, call `useSearchRestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchRestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchRestQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      term: // value for 'term'
+ *   },
+ * });
+ */
+export function useSearchRestQuery(baseOptions: Apollo.QueryHookOptions<SearchRestQuery, SearchRestQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchRestQuery, SearchRestQueryVariables>(SearchRestDocument, options);
+      }
+export function useSearchRestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchRestQuery, SearchRestQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchRestQuery, SearchRestQueryVariables>(SearchRestDocument, options);
+        }
+export type SearchRestQueryHookResult = ReturnType<typeof useSearchRestQuery>;
+export type SearchRestLazyQueryHookResult = ReturnType<typeof useSearchRestLazyQuery>;
+export type SearchRestQueryResult = Apollo.QueryResult<SearchRestQuery, SearchRestQueryVariables>;
 export const VerifyDocument = gql`
     mutation verify($code: String!) {
   verifyEmail(code: $code) {
@@ -921,7 +1001,7 @@ export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
 export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
 export const EditProfileDocument = gql`
     mutation editProfile($email: String, $password: String) {
-  update(email: "", password: "") {
+  update(email: $email, password: $password) {
     isSuccess
     UpdatedUser {
       email
