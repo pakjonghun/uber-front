@@ -17,7 +17,12 @@ const VERIFYMUTATION = gql`
 
 const ConfirmEmail = () => {
   const client = useApolloClient();
-  const { data: me } = useMe();
+  const [actionFunc, { data: me }] = useMe();
+
+  useEffect(() => {
+    actionFunc();
+  }, [actionFunc]);
+
   const nav = useNavigate();
   const code = window.location.href.split("code=")[1];
   const [verifyFunc, { loading }] = useMutation<VerifyMutation>(

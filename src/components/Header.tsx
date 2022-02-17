@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import useMe from "../hooks/useMe";
@@ -10,7 +10,12 @@ import { getIsLoggedIn, getToken } from "../apollo";
 import { TOKEN } from "../constants";
 
 const Header = () => {
-  const { data } = useMe();
+  const [actinFunc, { data }] = useMe();
+
+  useEffect(() => {
+    actinFunc();
+  }, [actinFunc]);
+
   const logout = useLogout();
   const onClick = useCallback(() => {
     logout();
@@ -19,6 +24,7 @@ const Header = () => {
     getIsLoggedIn(false);
   }, [logout]);
 
+  const nav = useNavigate();
   return (
     <div className="mx-auto w-full max-w-screen-xl">
       {!data?.me?.isEmailVerified && (
@@ -27,7 +33,17 @@ const Header = () => {
         </div>
       )}
       <header className="flex item-center justify-between w-full mx-auto py-3 px-6 xl:px-2">
-        <h1>Uber Eats</h1>
+        <ul className="flex space-x-5">
+          <li>
+            <Link to="/">UberEats</Link>
+          </li>
+          <li>
+            <Link to="#" onClick={() => nav(-1)}>
+              &larr; back
+            </Link>
+          </li>
+        </ul>
+
         <ul className="flex space-x-5 text-xl">
           <li>
             <Link to="/profile">

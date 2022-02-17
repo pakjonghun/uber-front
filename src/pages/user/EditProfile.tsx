@@ -1,5 +1,5 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -34,7 +34,12 @@ const EditProfile = () => {
     formState: { errors, isValid },
   } = useForm<EditProfileFormProps>({ mode: "onChange" });
 
-  const { data: me, refetch } = useMe();
+  const [actionFunc, { data: me }] = useMe();
+
+  useEffect(() => {
+    actionFunc();
+  }, [actionFunc]);
+
   const nav = useNavigate();
   const client = useApolloClient();
   const [editFunc, { loading, error }] = useMutation<EditProfileMutation>(
@@ -47,23 +52,24 @@ const EditProfile = () => {
       onCompleted: async (data) => {
         const { isSuccess } = data.update;
         const email = watch("email");
-        await refetch();
-        // if (isSuccess && me?.me && email) {
-        //   client.writeFragment({
-        //     id: `Users:${me.me.id}`,
-        //     fragment: gql`
-        //       fragment EditEmail on Users {
-        //         email
-        //         isEmailVerified
-        //       }
-        //     `,
-        //     data: {
-        //       email,
-        //       isEmailVerified: false,
-        //     },
-        //   });
 
-        nav("/");
+        if (isSuccess && me?.me && email) {
+          client.writeFragment({
+            id: `Users:${me.me.id}`,
+            fragment: gql`
+              fragment EditEmail on Users {
+                email
+                isEmailVerified
+              }
+            `,
+            data: {
+              email,
+              isEmailVerified: false,
+            },
+          });
+
+          nav("/");
+        }
       },
     }
   );

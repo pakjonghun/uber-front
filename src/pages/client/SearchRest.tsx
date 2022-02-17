@@ -8,30 +8,22 @@ import RestComponent from "../../components/Rest";
 import { useNavigate } from "react-router-dom";
 import Helemt from "../../components/Helmet";
 import { REST_FRAGMENT } from "../../fragments";
+import { usePage, useSearchRest } from "../../hooks/hooks";
+import Loading from "../../components/Loading";
+import MainLayout from "../../components/MainLayout";
 
-const SEARCHRESTS = gql`
-  ${REST_FRAGMENT}
-  query searchRest($page: Int, $term: String!) {
-    searchRest(page: $page, term: $term) {
-      totalPages
-      totalResults
-      data {
-        ...RestSearchField
-      }
-    }
-  }
-`;
 const SearchRests = () => {
-  const [page, setPage] = useState(1);
-
-  const [searchFunc, { loading, data }] = useLazyQuery<
-    SearchRestQuery,
-    SearchRestQueryVariables
-  >(SEARCHRESTS, { onCompleted: (data) => console.log(data) });
+  const { data, loading, searchFunc } = useSearchRest();
+  const pageResult = usePage(1, data?.searchRest.totalPages);
+  const { page } = pageResult;
+  const restResult = {
+    data: data?.searchRest.data,
+    totalPages: data?.searchRest.totalPages,
+  };
 
   const nav = useNavigate();
+  const term = window.location.href.split("term=")[1];
   useEffect(() => {
-    const term = window.location.href.split("term=")[1];
     if (!term) return nav("/");
     searchFunc({
       variables: {
@@ -39,19 +31,15 @@ const SearchRests = () => {
         term,
       },
     });
-  }, [page, nav, searchFunc]);
+  }, [page, nav, searchFunc, term]);
 
-  if (loading) {
-    <div className="mt-[30%]">
-      <span className="font-bold text-2xl">Loading</span>
-    </div>;
-  }
+  if (loading) return <Loading />;
   return (
-    <>
-      <Helemt title="Search Result" />
-      {/* {data?.searchRest.data &&
-        data.searchRest.data.map((i) => <RestComponent key={i.id} {...i} />)} */}
-    </>
+    <MainLayout
+      restResult={restResult}
+      pageResult={pageResult}
+      title={`${term} SearchResult`}
+    />
   );
 };
 

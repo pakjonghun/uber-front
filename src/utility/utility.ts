@@ -20,3 +20,5 @@ export const onError = (err: any) => {
     alert(err);
   }
 };
+
+export const createClass = (...args: string[]) => args.join(" ");

@@ -391,6 +391,11 @@ export type OutLogin = {
   token?: Maybe<Scalars['String']>;
 };
 
+export type OutMyRest = {
+  __typename?: 'OutMyRest';
+  rest?: Maybe<Array<Rest>>;
+};
+
 export type OutProfile = {
   __typename?: 'OutProfile';
   email: Scalars['String'];
@@ -408,7 +413,7 @@ export type OutRegisterRest = {
   __typename?: 'OutRegisterRest';
   error?: Maybe<Scalars['String']>;
   isSuccess: Scalars['Boolean'];
-  rest?: Maybe<RegisterRestOut>;
+  rest?: Maybe<Rest>;
 };
 
 export type OutRestSestch = {
@@ -462,6 +467,7 @@ export type Query = {
   getOrder: OutGetOrder;
   getOrders: OutGetOrders;
   me?: Maybe<Users>;
+  myRest: OutMyRest;
   profile: OutProfile;
   searchRest: OutRestSestch;
 };
@@ -519,24 +525,6 @@ export type RegisterRestDto = {
   cateName?: InputMaybe<Scalars['String']>;
   img?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-};
-
-export type RegisterRestOut = {
-  __typename?: 'RegisterRestOut';
-  adress: Scalars['String'];
-  cate?: Maybe<Cate>;
-  createdAt: Scalars['DateTime'];
-  dish: Array<Dish>;
-  id: Scalars['Float'];
-  img?: Maybe<Scalars['String']>;
-  isPromited: Scalars['Boolean'];
-  name: Scalars['String'];
-  order?: Maybe<Array<OrderEntity>>;
-  owner: Users;
-  ownerName: Scalars['String'];
-  pay?: Maybe<Array<Pay>>;
-  promoteUntil?: Maybe<Scalars['DateTime']>;
-  updatedAt: Scalars['DateTime'];
 };
 
 export type Rest = {
@@ -653,7 +641,50 @@ export type RestInputType = {
   promoteUntil?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type RestSearchFieldFragment = { __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, name: string } | null };
+export type RestSearchFieldFragment = { __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean };
+
+export type CateFieldFragment = { __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number };
+
+export type CateRestFieldFragment = { __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number, rest: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean }> };
+
+export type DishFieldFragment = { __typename?: 'Dish', id: number, name: string, price: number, desc?: string | null };
+
+export type RestsQueryVariables = Exact<{
+  restPage?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type RestsQuery = { __typename?: 'Query', findRests: { __typename?: 'OutFindRestDto', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean }> | null } };
+
+export type FindAllCateQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type FindAllCateQuery = { __typename?: 'Query', findAllCate: { __typename?: 'FindAllCate', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number }> | null } };
+
+export type FindOneCateQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']>;
+  slug: Scalars['String'];
+}>;
+
+
+export type FindOneCateQuery = { __typename?: 'Query', findOneCate: { __typename?: 'OutFindOneCate', totalPages?: number | null, totalResults?: number | null, date?: { __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number } | null, rest?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean }> | null } };
+
+export type SearchRestQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']>;
+  term: Scalars['String'];
+}>;
+
+
+export type SearchRestQuery = { __typename?: 'Query', searchRest: { __typename?: 'OutRestSestch', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean }> | null } };
+
+export type FindRestByIdQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type FindRestByIdQuery = { __typename?: 'Query', findRestById: { __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number } | null, dish: Array<{ __typename?: 'Dish', id: number, name: string, desc?: string | null, img?: string | null }> } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -682,21 +713,17 @@ export type CreateAccountMutationVariables = Exact<{
 
 export type CreateAccountMutation = { __typename?: 'Mutation', register: { __typename?: 'OutRegister', isSuccess: boolean, error?: string | null } };
 
-export type RestsQueryVariables = Exact<{
-  catePage?: InputMaybe<Scalars['Int']>;
-  restPage?: InputMaybe<Scalars['Int']>;
+export type MyRestQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyRestQuery = { __typename?: 'Query', myRest: { __typename?: 'OutMyRest', rest?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean, dish: Array<{ __typename?: 'Dish', id: number, name: string, price: number, desc?: string | null }> }> | null } };
+
+export type CreateRestMutationVariables = Exact<{
+  args: RegisterRestDto;
 }>;
 
 
-export type RestsQuery = { __typename?: 'Query', findAllCate: { __typename?: 'FindAllCate', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Cate', id: number, slug: string, name: string, img?: string | null, restaurantCount: number }> | null }, findRests: { __typename?: 'OutFindRestDto', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, name: string } | null }> | null } };
-
-export type SearchRestQueryVariables = Exact<{
-  page?: InputMaybe<Scalars['Int']>;
-  term: Scalars['String'];
-}>;
-
-
-export type SearchRestQuery = { __typename?: 'Query', searchRest: { __typename?: 'OutRestSestch', totalPages?: number | null, totalResults?: number | null, data?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, isPromited: boolean, cate?: { __typename?: 'Cate', id: number, name: string } | null }> | null } };
+export type CreateRestMutation = { __typename?: 'Mutation', createRest: { __typename?: 'OutRegisterRest', isSuccess: boolean, error?: string | null, rest?: { __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean } | null } };
 
 export type VerifyMutationVariables = Exact<{
   code: Scalars['String'];
@@ -715,17 +742,42 @@ export type EditProfileMutationVariables = Exact<{
 
 export type EditProfileMutation = { __typename?: 'Mutation', update: { __typename?: 'OutUpdate', isSuccess: boolean, UpdatedUser?: { __typename?: 'UpdatedUser', email: string, role: Role } | null } };
 
+export type EditEmailFragment = { __typename?: 'Users', email: string, isEmailVerified: boolean };
+
+export const CateFieldFragmentDoc = gql`
+    fragment CateField on Cate {
+  id
+  slug
+  name
+  img
+  restaurantCount
+}
+    `;
 export const RestSearchFieldFragmentDoc = gql`
     fragment RestSearchField on Rest {
   id
   name
   adress
   img
+  promoteUntil
   isPromited
-  cate {
-    id
-    name
+}
+    `;
+export const CateRestFieldFragmentDoc = gql`
+    fragment CateRestField on Cate {
+  ...CateField
+  rest {
+    ...RestSearchField
   }
+}
+    ${CateFieldFragmentDoc}
+${RestSearchFieldFragmentDoc}`;
+export const DishFieldFragmentDoc = gql`
+    fragment DishField on Dish {
+  id
+  name
+  price
+  desc
 }
     `;
 export const ChangeVerifyedFragmentDoc = gql`
@@ -733,6 +785,219 @@ export const ChangeVerifyedFragmentDoc = gql`
   isEmailVerified
 }
     `;
+export const EditEmailFragmentDoc = gql`
+    fragment EditEmail on Users {
+  email
+  isEmailVerified
+}
+    `;
+export const RestsDocument = gql`
+    query rests($restPage: Int) {
+  findRests(page: $restPage) {
+    data {
+      ...RestSearchField
+    }
+    totalPages
+    totalResults
+  }
+}
+    ${RestSearchFieldFragmentDoc}`;
+
+/**
+ * __useRestsQuery__
+ *
+ * To run a query within a React component, call `useRestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRestsQuery({
+ *   variables: {
+ *      restPage: // value for 'restPage'
+ *   },
+ * });
+ */
+export function useRestsQuery(baseOptions?: Apollo.QueryHookOptions<RestsQuery, RestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RestsQuery, RestsQueryVariables>(RestsDocument, options);
+      }
+export function useRestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RestsQuery, RestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RestsQuery, RestsQueryVariables>(RestsDocument, options);
+        }
+export type RestsQueryHookResult = ReturnType<typeof useRestsQuery>;
+export type RestsLazyQueryHookResult = ReturnType<typeof useRestsLazyQuery>;
+export type RestsQueryResult = Apollo.QueryResult<RestsQuery, RestsQueryVariables>;
+export const FindAllCateDocument = gql`
+    query FindAllCate($page: Int) {
+  findAllCate(page: $page) {
+    data {
+      ...CateField
+    }
+    totalPages
+    totalResults
+  }
+}
+    ${CateFieldFragmentDoc}`;
+
+/**
+ * __useFindAllCateQuery__
+ *
+ * To run a query within a React component, call `useFindAllCateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAllCateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAllCateQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useFindAllCateQuery(baseOptions?: Apollo.QueryHookOptions<FindAllCateQuery, FindAllCateQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllCateQuery, FindAllCateQueryVariables>(FindAllCateDocument, options);
+      }
+export function useFindAllCateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllCateQuery, FindAllCateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllCateQuery, FindAllCateQueryVariables>(FindAllCateDocument, options);
+        }
+export type FindAllCateQueryHookResult = ReturnType<typeof useFindAllCateQuery>;
+export type FindAllCateLazyQueryHookResult = ReturnType<typeof useFindAllCateLazyQuery>;
+export type FindAllCateQueryResult = Apollo.QueryResult<FindAllCateQuery, FindAllCateQueryVariables>;
+export const FindOneCateDocument = gql`
+    query findOneCate($page: Int, $slug: String!) {
+  findOneCate(page: $page, slug: $slug) {
+    totalPages
+    totalResults
+    date {
+      ...CateField
+    }
+    rest {
+      ...RestSearchField
+    }
+  }
+}
+    ${CateFieldFragmentDoc}
+${RestSearchFieldFragmentDoc}`;
+
+/**
+ * __useFindOneCateQuery__
+ *
+ * To run a query within a React component, call `useFindOneCateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneCateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneCateQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useFindOneCateQuery(baseOptions: Apollo.QueryHookOptions<FindOneCateQuery, FindOneCateQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneCateQuery, FindOneCateQueryVariables>(FindOneCateDocument, options);
+      }
+export function useFindOneCateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCateQuery, FindOneCateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneCateQuery, FindOneCateQueryVariables>(FindOneCateDocument, options);
+        }
+export type FindOneCateQueryHookResult = ReturnType<typeof useFindOneCateQuery>;
+export type FindOneCateLazyQueryHookResult = ReturnType<typeof useFindOneCateLazyQuery>;
+export type FindOneCateQueryResult = Apollo.QueryResult<FindOneCateQuery, FindOneCateQueryVariables>;
+export const SearchRestDocument = gql`
+    query searchRest($page: Int, $term: String!) {
+  searchRest(page: $page, term: $term) {
+    totalPages
+    totalResults
+    data {
+      ...RestSearchField
+    }
+  }
+}
+    ${RestSearchFieldFragmentDoc}`;
+
+/**
+ * __useSearchRestQuery__
+ *
+ * To run a query within a React component, call `useSearchRestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchRestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchRestQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      term: // value for 'term'
+ *   },
+ * });
+ */
+export function useSearchRestQuery(baseOptions: Apollo.QueryHookOptions<SearchRestQuery, SearchRestQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchRestQuery, SearchRestQueryVariables>(SearchRestDocument, options);
+      }
+export function useSearchRestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchRestQuery, SearchRestQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchRestQuery, SearchRestQueryVariables>(SearchRestDocument, options);
+        }
+export type SearchRestQueryHookResult = ReturnType<typeof useSearchRestQuery>;
+export type SearchRestLazyQueryHookResult = ReturnType<typeof useSearchRestLazyQuery>;
+export type SearchRestQueryResult = Apollo.QueryResult<SearchRestQuery, SearchRestQueryVariables>;
+export const FindRestByIdDocument = gql`
+    query findRestById($id: Float!) {
+  findRestById(id: $id) {
+    ...RestSearchField
+    cate {
+      ...CateField
+    }
+    dish {
+      id
+      name
+      desc
+      img
+    }
+  }
+}
+    ${RestSearchFieldFragmentDoc}
+${CateFieldFragmentDoc}`;
+
+/**
+ * __useFindRestByIdQuery__
+ *
+ * To run a query within a React component, call `useFindRestByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindRestByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindRestByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindRestByIdQuery(baseOptions: Apollo.QueryHookOptions<FindRestByIdQuery, FindRestByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindRestByIdQuery, FindRestByIdQueryVariables>(FindRestByIdDocument, options);
+      }
+export function useFindRestByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindRestByIdQuery, FindRestByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindRestByIdQuery, FindRestByIdQueryVariables>(FindRestByIdDocument, options);
+        }
+export type FindRestByIdQueryHookResult = ReturnType<typeof useFindRestByIdQuery>;
+export type FindRestByIdLazyQueryHookResult = ReturnType<typeof useFindRestByIdLazyQuery>;
+export type FindRestByIdQueryResult = Apollo.QueryResult<FindRestByIdQuery, FindRestByIdQueryVariables>;
 export const LogoutDocument = gql`
     mutation logout {
   logout {
@@ -874,97 +1139,83 @@ export function useCreateAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateAccountMutationHookResult = ReturnType<typeof useCreateAccountMutation>;
 export type CreateAccountMutationResult = Apollo.MutationResult<CreateAccountMutation>;
 export type CreateAccountMutationOptions = Apollo.BaseMutationOptions<CreateAccountMutation, CreateAccountMutationVariables>;
-export const RestsDocument = gql`
-    query rests($catePage: Int, $restPage: Int) {
-  findAllCate(page: $catePage) {
-    data {
-      id
-      slug
-      name
-      img
-      restaurantCount
-    }
-    totalPages
-    totalResults
-  }
-  findRests(page: $restPage) {
-    data {
+export const MyRestDocument = gql`
+    query myRest {
+  myRest {
+    rest {
       ...RestSearchField
+      dish {
+        ...DishField
+      }
     }
-    totalPages
-    totalResults
   }
 }
-    ${RestSearchFieldFragmentDoc}`;
+    ${RestSearchFieldFragmentDoc}
+${DishFieldFragmentDoc}`;
 
 /**
- * __useRestsQuery__
+ * __useMyRestQuery__
  *
- * To run a query within a React component, call `useRestsQuery` and pass it any options that fit your needs.
- * When your component renders, `useRestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMyRestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyRestQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useRestsQuery({
+ * const { data, loading, error } = useMyRestQuery({
  *   variables: {
- *      catePage: // value for 'catePage'
- *      restPage: // value for 'restPage'
  *   },
  * });
  */
-export function useRestsQuery(baseOptions?: Apollo.QueryHookOptions<RestsQuery, RestsQueryVariables>) {
+export function useMyRestQuery(baseOptions?: Apollo.QueryHookOptions<MyRestQuery, MyRestQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RestsQuery, RestsQueryVariables>(RestsDocument, options);
+        return Apollo.useQuery<MyRestQuery, MyRestQueryVariables>(MyRestDocument, options);
       }
-export function useRestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RestsQuery, RestsQueryVariables>) {
+export function useMyRestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyRestQuery, MyRestQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RestsQuery, RestsQueryVariables>(RestsDocument, options);
+          return Apollo.useLazyQuery<MyRestQuery, MyRestQueryVariables>(MyRestDocument, options);
         }
-export type RestsQueryHookResult = ReturnType<typeof useRestsQuery>;
-export type RestsLazyQueryHookResult = ReturnType<typeof useRestsLazyQuery>;
-export type RestsQueryResult = Apollo.QueryResult<RestsQuery, RestsQueryVariables>;
-export const SearchRestDocument = gql`
-    query searchRest($page: Int, $term: String!) {
-  searchRest(page: $page, term: $term) {
-    totalPages
-    totalResults
-    data {
+export type MyRestQueryHookResult = ReturnType<typeof useMyRestQuery>;
+export type MyRestLazyQueryHookResult = ReturnType<typeof useMyRestLazyQuery>;
+export type MyRestQueryResult = Apollo.QueryResult<MyRestQuery, MyRestQueryVariables>;
+export const CreateRestDocument = gql`
+    mutation createRest($args: RegisterRestDto!) {
+  createRest(args: $args) {
+    isSuccess
+    error
+    rest {
       ...RestSearchField
     }
   }
 }
     ${RestSearchFieldFragmentDoc}`;
+export type CreateRestMutationFn = Apollo.MutationFunction<CreateRestMutation, CreateRestMutationVariables>;
 
 /**
- * __useSearchRestQuery__
+ * __useCreateRestMutation__
  *
- * To run a query within a React component, call `useSearchRestQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchRestQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useCreateRestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useSearchRestQuery({
+ * const [createRestMutation, { data, loading, error }] = useCreateRestMutation({
  *   variables: {
- *      page: // value for 'page'
- *      term: // value for 'term'
+ *      args: // value for 'args'
  *   },
  * });
  */
-export function useSearchRestQuery(baseOptions: Apollo.QueryHookOptions<SearchRestQuery, SearchRestQueryVariables>) {
+export function useCreateRestMutation(baseOptions?: Apollo.MutationHookOptions<CreateRestMutation, CreateRestMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchRestQuery, SearchRestQueryVariables>(SearchRestDocument, options);
+        return Apollo.useMutation<CreateRestMutation, CreateRestMutationVariables>(CreateRestDocument, options);
       }
-export function useSearchRestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchRestQuery, SearchRestQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchRestQuery, SearchRestQueryVariables>(SearchRestDocument, options);
-        }
-export type SearchRestQueryHookResult = ReturnType<typeof useSearchRestQuery>;
-export type SearchRestLazyQueryHookResult = ReturnType<typeof useSearchRestLazyQuery>;
-export type SearchRestQueryResult = Apollo.QueryResult<SearchRestQuery, SearchRestQueryVariables>;
+export type CreateRestMutationHookResult = ReturnType<typeof useCreateRestMutation>;
+export type CreateRestMutationResult = Apollo.MutationResult<CreateRestMutation>;
+export type CreateRestMutationOptions = Apollo.BaseMutationOptions<CreateRestMutation, CreateRestMutationVariables>;
 export const VerifyDocument = gql`
     mutation verify($code: String!) {
   verifyEmail(code: $code) {

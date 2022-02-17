@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
+.container {
+  @apply px-3 my-10;
+}
+
+.buttonAction {
+  @apply hover:scale-110 active:scale-100 transition-transform duration-100;
+}
 @tailwind utilities;

@@ -1,5 +1,5 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { MeQuery } from "../generated/types";
 import { onError } from "../utility/utility";
 import { TOKEN } from "../constants";
@@ -17,7 +17,7 @@ const MEQUERY = gql`
 `;
 
 const useMe = () => {
-  return useQuery<MeQuery>(MEQUERY, {
+  return useLazyQuery<MeQuery>(MEQUERY, {
     onError: (error) => {
       onError(error);
       localStorage.removeItem(TOKEN);
