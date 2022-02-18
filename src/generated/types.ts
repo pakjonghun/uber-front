@@ -716,7 +716,7 @@ export type CreateAccountMutation = { __typename?: 'Mutation', register: { __typ
 export type MyRestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyRestQuery = { __typename?: 'Query', myRest: { __typename?: 'OutMyRest', rest?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean, dish: Array<{ __typename?: 'Dish', id: number, name: string, price: number, desc?: string | null }> }> | null } };
+export type MyRestQuery = { __typename?: 'Query', myRest: { __typename?: 'OutMyRest', rest?: Array<{ __typename?: 'Rest', id: number, name: string, adress: string, img?: string | null, promoteUntil?: any | null, isPromited: boolean }> | null } };
 
 export type CreateRestMutationVariables = Exact<{
   args: RegisterRestDto;
@@ -1144,14 +1144,10 @@ export const MyRestDocument = gql`
   myRest {
     rest {
       ...RestSearchField
-      dish {
-        ...DishField
-      }
     }
   }
 }
-    ${RestSearchFieldFragmentDoc}
-${DishFieldFragmentDoc}`;
+    ${RestSearchFieldFragmentDoc}`;
 
 /**
  * __useMyRestQuery__

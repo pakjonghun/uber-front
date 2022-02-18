@@ -21,13 +21,14 @@ const RestComponent: React.FC<RestComponentProps> = ({
   isPromited,
   cate,
 }) => {
+  console.log(img);
   return (
     <Link to={`/rests/${id}`}>
       <div className="flex flex-col mx-10 sm:mx-8 bg-red-50 cursor-pointer group">
         <div className="overflow-hidden">
           <div
             style={{
-              backgroundImage: `url(${img || logo})`,
+              backgroundImage: `url(${img}), url(${logo})`,
             }}
             className="py-32 sm:py-24 md:py-20 mb-1 bg-no-repeat bg-cover bg-center hover:scale-110 transition-transform duration-150"
           />
